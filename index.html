@@ -171,10 +171,10 @@
         .game-over-overlay.active {
             opacity: 1;
             pointer-events: all;
-game-over-title {
         }
 
-        .            font-size: 36px;
+        .game-over-title {
+            font-size: 36px;
             font-weight: 900;
             background: linear-gradient(135deg, #ff0080, #00ffff);
             -webkit-background-clip: text;
@@ -359,21 +359,21 @@ game-over-title {
             <div class="game-over-overlay" id="game-over">
                 <div class="game-over-title">GAME OVER</div>
                 <div class="final-score">Score: <span id="final-score">0</span></div>
-                <button class="start-btn" id="restart-btn">Play Again</button>
+                <button type="button" class="start-btn" id="restart-btn">Play Again</button>
             </div>
         </div>
 
-        <button class="start-btn" id="start-btn">Start</button>
+        <button type="button" class="start-btn" id="start-btn">Start</button>
 
         <!-- Mobile Touch Controls -->
         <div class="mobile-controls">
             <div class="control-row">
-                <button class="ctrl-btn rotate" id="btn-rotate">↻</button>
+                <button type="button" class="ctrl-btn rotate" id="btn-rotate">↻</button>
             </div>
             <div class="control-row">
-                <button class="ctrl-btn" id="btn-left">←</button>
-                <button class="ctrl-btn drop" id="btn-down">↓</button>
-                <button class="ctrl-btn" id="btn-right">→</button>
+                <button type="button" class="ctrl-btn" id="btn-left">←</button>
+                <button type="button" class="ctrl-btn drop" id="btn-down">↓</button>
+                <button type="button" class="ctrl-btn" id="btn-right">→</button>
             </div>
         </div>
 
