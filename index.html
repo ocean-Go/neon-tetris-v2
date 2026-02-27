@@ -2,24 +2,41 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Neon Tetris</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --safe-area-top: env(safe-area-inset-top, 0px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-area-left: env(safe-area-inset-left, 0px);
+            --safe-area-right: env(safe-area-inset-right, 0px);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            touch-action: none;
+            overscroll-behavior: none;
         }
 
         body {
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
             background: #0a0a0f;
             font-family: 'Orbitron', monospace;
             overflow: hidden;
+            padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);
         }
 
         body::before {
@@ -32,118 +49,116 @@
             background: 
                 radial-gradient(ellipse at 20% 80%, rgba(120, 0, 255, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(255, 0, 128, 0.05) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
+                radial-gradient(ellipse at 50% 50%, rgba(255, 0, 128, 0.05) 0%, transparent -events: none;
+70%);
+            pointer            z-index: 0;
         }
 
-        .game-container {
-            display: flex;
-            gap: 30px;
-            align-items: flex-start;
-            z-index: 1;
-            position: relative;
-        }
-
-        .side-panel {
+        .game-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            align-items: center;
+            gap: 12px;
+            z-index: 1;
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            gap: 8px;
         }
 
         .panel {
             background: rgba(20, 20, 35, 0.9);
             border: 1px solid rgba(0, 255, 255, 0.2);
             border-radius: 12px;
-            padding: 20px;
-            min-width: 150px;
+            padding: 12px 16px;
             backdrop-filter: blur(10px);
-            box-shadow: 
-                0 0 20px rgba(0, 255, 255, 0.1),
-                inset 0 0 20px rgba(0, 255, 255, 0.05);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+            flex: 1;
+            text-align: center;
         }
 
         .panel-title {
             color: rgba(0, 255, 255, 0.7);
-            font-size: 12px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
         }
 
         .panel-value {
             color: #fff;
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 900;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
-        .next-piece-panel {
-            min-width: 120px;
+        .next-panel {
+            flex: 0 0 auto;
         }
 
         #next-canvas {
             display: block;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .game-board-wrapper {
             position: relative;
-            padding: 4px;
+            padding: 3px;
             background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 128, 0.3));
-            border-radius: 16px;
-            box-shadow: 
-                0 0 40px rgba(0, 255, 255, 0.3),
-                0 0 80px rgba(255, 0, 128, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
             animation: glow-pulse 3s ease-in-out infinite;
         }
 
         @keyframes glow-pulse {
-            0%, 100% { box-shadow: 0 0 40px rgba(0, 255, 255, 0.3), 0 0 80px rgba(255, 0, 128, 0.2); }
-            50% { box-shadow: 0 0 60px rgba(0, 255, 255, 0.5), 0 0 100px rgba(255, 0, 128, 0.3); }
+            0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 50px rgba(0, 255, 255, 0.5); }
         }
 
         #game-canvas {
             display: block;
             background: rgba(10, 10, 20, 0.95);
-            border-radius: 12px;
+            border-radius: 10px;
+            touch-action: none;
         }
 
         .start-btn {
             background: linear-gradient(135deg, #00ffff, #ff0080);
             border: none;
             color: #fff;
-            padding: 15px 40px;
+            padding: 16px 48px;
             font-family: 'Orbitron', monospace;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             border-radius: 30px;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 3px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-            margin-top: 20px;
-            align-self: center;
-        }
-
-        .start-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(0, 255, 255, 0.8);
         }
 
         .start-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
         }
 
         .game-over-overlay {
             position: absolute;
-            top: 4px;
-            left: 4px;
-            right: 4px;
-            bottom: 4px;
-            background: rgba(10, 10, 20, 0.95);
-            border-radius: 12px;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            background: rgba(10, 10, 20, 0.97);
+            border-radius: 10px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -156,36 +171,69 @@
         .game-over-overlay.active {
             opacity: 1;
             pointer-events: all;
+game-over-title {
         }
 
-        .game-over-title {
-            font-size: 48px;
+        .            font-size: 36px;
             font-weight: 900;
             background: linear-gradient(135deg, #ff0080, #00ffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 20px;
-            animation: text-glow 1.5s ease-in-out infinite;
-        }
-
-        @keyframes text-glow {
-            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 0, 128, 0.8)); }
-            50% { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8)); }
+            margin-bottom: 16px;
         }
 
         .final-score {
             color: #fff;
-            font-size: 24px;
-            margin-bottom: 30px;
+            font-size: 20px;
+            margin-bottom: 24px;
         }
 
-        .controls-hint {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 11px;
-            text-align: center;
-            margin-top: 20px;
-            letter-spacing: 1px;
+        /* Mobile Controls */
+        .mobile-controls {
+            display: none;
+            width: 100%;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .ctrl-btn {
+            width: 70px;
+            height: 56px;
+            background: rgba(20, 20, 35, 0.9);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 12px;
+            color: #00ffff;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: all 0.15s ease;
+        }
+
+        .ctrl-btn:active {
+            background: rgba(0, 255, 255, 0.2);
+            transform: scale(0.95);
+        }
+
+        .ctrl-btn.rotate {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 0, 128, 0.3), rgba(0, 255, 255, 0.3));
+        }
+
+        .ctrl-btn.drop {
+            background: linear-gradient(135deg, rgba(255, 0, 128, 0.5), rgba(255, 0, 128, 0.3));
         }
 
         .level-up {
@@ -193,7 +241,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 64px;
+            font-size: 48px;
             font-weight: 900;
             color: #00ffff;
             text-shadow: 0 0 30px #00ffff;
@@ -213,26 +261,81 @@
             100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
         }
 
-        @media (max-width: 600px) {
-            .game-container {
-                flex-direction: column;
-                align-items: center;
+        .desktop-hint {
+            display: block;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 10px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        /* iPhone specific */
+        @media screen and (max-width: 430px) {
+            .game-wrapper {
+                padding: 8px;
+                gap: 8px;
             }
-            .side-panel {
+
+            .panel {
+                padding: 8px 12px;
+            }
+
+            .panel-value {
+                font-size: 18px;
+            }
+
+            .mobile-controls {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .desktop-hint {
+                display: none;
+            }
+        }
+
+        @media screen and (min-width: 431px) {
+            .game-wrapper {
                 flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: center;
+                max-width: 700px;
+                gap: 20px;
             }
-            #game-canvas {
-                width: 280px;
-                height: 560px;
+
+            .top-bar {
+                order: 1;
+            }
+
+            .game-board-wrapper {
+                order: 2;
+            }
+
+            .mobile-controls {
+                display: none !important;
+            }
+        }
+
+        /* Landscape mode */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 5px;
+            }
+
+            .game-wrapper {
+                flex-direction: row;
+                gap: 15px;
+            }
+
+            .mobile-controls {
+                display: none !important;
             }
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="side-panel">
+    <div class="game-wrapper">
+        <div class="top-bar">
             <div class="panel">
                 <div class="panel-title">Score</div>
                 <div class="panel-value" id="score">0</div>
@@ -245,34 +348,73 @@
                 <div class="panel-title">Lines</div>
                 <div class="panel-value" id="lines">0</div>
             </div>
-            <div class="panel next-piece-panel">
+            <div class="panel next-panel">
                 <div class="panel-title">Next</div>
-                <canvas id="next-canvas" width="100" height="100"></canvas>
+                <canvas id="next-canvas" width="80" height="80"></canvas>
             </div>
-            <button class="start-btn" id="start-btn">Start Game</button>
         </div>
-        
+
         <div class="game-board-wrapper">
-            <canvas id="game-canvas" width="280" height="560"></canvas>
+            <canvas id="game-canvas"></canvas>
             <div class="game-over-overlay" id="game-over">
                 <div class="game-over-title">GAME OVER</div>
                 <div class="final-score">Score: <span id="final-score">0</span></div>
                 <button class="start-btn" id="restart-btn">Play Again</button>
             </div>
         </div>
+
+        <button class="start-btn" id="start-btn">Start</button>
+
+        <!-- Mobile Touch Controls -->
+        <div class="mobile-controls">
+            <div class="control-row">
+                <button class="ctrl-btn rotate" id="btn-rotate">↻</button>
+            </div>
+            <div class="control-row">
+                <button class="ctrl-btn" id="btn-left">←</button>
+                <button class="ctrl-btn drop" id="btn-down">↓</button>
+                <button class="ctrl-btn" id="btn-right">→</button>
+            </div>
+        </div>
+
+        <div class="desktop-hint">← → ↓ Move &nbsp; ↑ Rotate &nbsp; Space: Hard Drop</div>
     </div>
 
     <div class="level-up" id="level-up">LEVEL UP!</div>
-    <div class="controls-hint">← → ↓ Move &nbsp;&nbsp; ↑ Rotate &nbsp;&nbsp; Space: Hard Drop</div>
 
     <script>
+        // Responsive canvas sizing
+        function getCanvasSize() {
+            const maxWidth = Math.min(window.innerWidth - 20, 360);
+            const blockSize = Math.floor(maxWidth / 10);
+            return {
+                width: blockSize * 10,
+                height: blockSize * 20,
+                blockSize: blockSize
+            };
+        }
+
+        let { width: CANVAS_WIDTH, height: CANVAS_HEIGHT, blockSize: BLOCK_SIZE } = getCanvasSize();
         const COLS = 10;
         const ROWS = 20;
-        const BLOCK_SIZE = 28;
+
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         const nextCanvas = document.getElementById('next-canvas');
         const nextCtx = nextCanvas.getContext('2d');
+
+        function resizeCanvas() {
+            const { width, height, blockSize } = getCanvasSize();
+            CANVAS_WIDTH = width;
+            CANVAS_HEIGHT = height;
+            BLOCK_SIZE = blockSize;
+            canvas.width = width;
+            canvas.height = height;
+            draw();
+        }
+
+        canvas.width = CANVAS_WIDTH;
+        canvas.height = CANVAS_HEIGHT;
 
         const COLORS = [
             null,
@@ -306,6 +448,11 @@
         let dropInterval = 1000;
         let lastDrop = 0;
         let animationId = null;
+
+        // Touch handling
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
 
         function createBoard() {
             board = Array(ROWS).fill(null).map(() => Array(COLS).fill(0));
@@ -398,22 +545,24 @@
 
         function drawBlock(context, x, y, colorIndex, size = BLOCK_SIZE) {
             const color = COLORS[colorIndex];
+            const padding = Math.max(1, size * 0.04);
+            
             context.fillStyle = color;
-            context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+            context.fillRect(x * size + padding, y * size + padding, size - padding * 2, size - padding * 2);
             
             // Glow effect
             context.shadowColor = color;
-            context.shadowBlur = 10;
-            context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+            context.shadowBlur = 8;
+            context.fillRect(x * size + padding, y * size + padding, size - padding * 2, size - padding * 2);
             context.shadowBlur = 0;
             
             // Inner highlight
             const gradient = context.createLinearGradient(x * size, y * size, x * size + size, y * size + size);
-            gradient.addColorStop(0, 'rgba(255,255,255,0.3)');
+            gradient.addColorStop(0, 'rgba(255,255,255,0.35)');
             gradient.addColorStop(0.5, 'rgba(255,255,255,0)');
-            gradient.addColorStop(1, 'rgba(0,0,0,0.3)');
+            gradient.addColorStop(1, 'rgba(0,0,0,0.4)');
             context.fillStyle = gradient;
-            context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+            context.fillRect(x * size + padding, y * size + padding, size - padding * 2, size - padding * 2);
         }
 
         function draw() {
@@ -421,7 +570,7 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Grid lines
-            ctx.strokeStyle = 'rgba(0, 255, 255, 0.05)';
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.06)';
             ctx.lineWidth = 1;
             for (let x = 0; x <= COLS; x++) {
                 ctx.beginPath();
@@ -460,12 +609,13 @@
             nextCtx.fillStyle = 'rgba(10, 10, 20, 0.95)';
             nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
             if (nextPiece) {
-                const offsetX = (nextCanvas.width / BLOCK_SIZE - nextPiece.shape[0].length) / 2;
-                const offsetY = (nextCanvas.height / BLOCK_SIZE - nextPiece.shape.length) / 2;
+                const previewBlockSize = 16;
+                const offsetX = (nextCanvas.width / previewBlockSize - nextPiece.shape[0].length) / 2;
+                const offsetY = (nextCanvas.height / previewBlockSize - nextPiece.shape.length) / 2;
                 for (let y = 0; y < nextPiece.shape.length; y++) {
                     for (let x = 0; x < nextPiece.shape[y].length; x++) {
                         if (nextPiece.shape[y][x]) {
-                            drawBlock(nextCtx, offsetX + x, offsetY + y, nextPiece.type, BLOCK_SIZE);
+                            drawBlock(nextCtx, offsetX + x, offsetY + y, nextPiece.type, previewBlockSize);
                         }
                     }
                 }
@@ -514,6 +664,7 @@
         }
 
         function startGame() {
+            resizeCanvas();
             createBoard();
             score = 0;
             level = 1;
@@ -545,7 +696,6 @@
             if (!collide(board, rotated)) {
                 currentPiece = rotated;
             } else {
-                // Wall kick - try moving left/right
                 const kickLeft = { ...rotated, x: rotated.x - 1 };
                 const kickRight = { ...rotated, x: rotated.x + 1 };
                 if (!collide(board, kickLeft)) {
@@ -568,6 +718,7 @@
             updateDisplay();
         }
 
+        // Keyboard controls
         document.addEventListener('keydown', (e) => {
             if (!gameRunning && e.key !== 'Enter') return;
             
@@ -598,10 +749,77 @@
             }
         });
 
+        // Touch controls for game board
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (!gameRunning) return;
+            
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            const deltaTime = Date.now() - touchStartTime;
+            
+            const minSwipe = 30;
+            
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Horizontal swipe
+                if (deltaX > minSwipe) {
+                    move(1);
+                } else if (deltaX < -minSwipe) {
+                    move(-1);
+                }
+            } else {
+                // Vertical swipe
+                if (deltaY > minSwipe) {
+                    drop();
+                    score += 1;
+                    updateDisplay();
+                } else if (deltaY < -minSwipe) {
+                    hardDrop();
+                }
+            }
+            
+            // Tap to rotate (quick tap)
+            if (deltaTime < 200 && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+                rotatePiece();
+            }
+        }, { passive: false });
+
+        // Mobile button controls
+        document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); move(-1); }, { passive: false });
+        document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.preventDefault(); move(1); }, { passive: false });
+        document.getElementById('btn-down').addEventListener('touchstart', (e) => { 
+            e.preventDefault(); 
+            drop();
+            score += 1;
+            updateDisplay();
+        }, { passive: false });
+        document.getElementById('btn-rotate').addEventListener('touchstart', (e) => { e.preventDefault(); rotatePiece(); }, { passive: false });
+
+        // Button clicks
         document.getElementById('start-btn').addEventListener('click', startGame);
         document.getElementById('restart-btn').addEventListener('click', startGame);
 
-        // Initial draw
+        // Resize handler
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            if (!gameRunning) draw();
+        });
+
+        // Initial setup
+        resizeCanvas();
         createBoard();
         draw();
     </script>
